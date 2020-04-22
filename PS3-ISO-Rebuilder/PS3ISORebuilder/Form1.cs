@@ -2167,5 +2167,155 @@ namespace PS3ISORebuilder
                 return (uint)unchecked(((uint)((int)value & -16777216) >> 24) | (((long)value & 16711680L) >> 8) | (((long)value & 65280L) << 8) | (((long)value & 255L) << 24));
             }
         }
+
+        private void Label_JBCheck_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void Label_JBCheck_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] array = (string[])e.Data.GetData(DataFormats.FileDrop);
+                try
+                {
+                    string[] array2 = array;
+                    foreach (string str in array2)
+                    {
+                        if (Directory.Exists(str))
+                        {
+                            DirectoryInfo directoryInfo = new DirectoryInfo(str);
+                            lastjbfolder = directoryInfo.Parent.FullName;
+                            Settings.SetValue("lastjbfolder", lastjbfolder);
+                            _ISO = null;
+                            root_dir = "";
+                            _isofile = "";
+                            disable_controls();
+                            Textset(Summary_Label, "");
+                            listItemsRemove();
+                            if (File.Exists(directoryInfo.FullName + "\\PS3_GAME\\PARAM.SFO"))
+                            {
+                                FileStream fileStream = File.OpenRead(directoryInfo.FullName + "\\PS3_GAME\\PARAM.SFO");
+                                _SFO = new SFOReader(fileStream);
+                                fileStream.Close();
+                                if (_SFO.Entries.ContainsKey("TITLE_ID"))
+                                {
+                                    string text = "00.00";
+                                    string text2 = "00.00";
+                                    string text3 = "";
+                                    if (_SFO.Entries.ContainsKey("TITLE_ID"))
+                                    {
+                                        game_id = _SFO.Entries["TITLE_ID"].Data.ToString().Replace("\r", "").Replace("\n", "")
+                                            .Replace("\r\n", "");
+                                    }
+                                    if (_SFO.Entries.ContainsKey("TITLE"))
+                                    {
+                                        game_title = _SFO.Entries["TITLE"].Data.ToString().Replace("\r", "").Replace("\n", "")
+                                            .Replace("\r\n", "").Replace("&", "&&");
+                                    }
+                                    if (_SFO.Entries.ContainsKey("VERSION"))
+                                    {
+                                        text = _SFO.Entries["VERSION"].Data.ToString().Replace("\r", "").Replace("\n", "")
+                                            .Replace("\r\n", "");
+                                    }
+                                    if (_SFO.Entries.ContainsKey("APP_VER"))
+                                    {
+                                        text2 = _SFO.Entries["APP_VER"].Data.ToString().Replace("\r", "").Replace("\n", "")
+                                            .Replace("\r\n", "");
+                                    }
+                                    if (_SFO.Entries.ContainsKey("PS3_SYSTEM_VER"))
+                                    {
+                                        text3 = fixupdate(_SFO.Entries["PS3_SYSTEM_VER"].Data.ToString().Replace("\r", "").Replace("\n", "")
+                                            .Replace("\r\n", ""));
+                                    }
+                                    Textset(Label_Info, string.Format(gameinfo, game_id, game_title, text, text2, text3));
+                                    Textset(StatusLabel1, "reading Folder");
+                                    root_dir = directoryInfo.FullName;
+                                    disable_controls();
+                                    readDirThread = new BackgroundWorker();
+                                    readDirThread.DoWork += new DoWorkEventHandler(this.readDirThread_dowork);
+                                    readDirThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.readDirThread_Completed);
+                                    readDirThread.WorkerSupportsCancellation = true;
+                                    readDirThread.RunWorkerAsync();
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception projectError)
+                {
+                    ProjectData.SetProjectError(projectError);
+                    ProjectData.ClearProjectError();
+                }
+            }
+        }
+
+        private void Label_LoadIRD_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void Label_LoadIRD_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] array = (string[])e.Data.GetData(DataFormats.FileDrop);
+                try
+                {
+                    string[] array2 = array;
+                    foreach (string text in array2)
+                    {
+                        if (File.Exists(text))
+                        {
+                            FileInfo fileInfo = new FileInfo(text);
+                            if (Operators.CompareString(fileInfo.Extension.ToLower(), ".ird", TextCompare: false) == 0)
+                            {
+                                disable_controls();
+                                _IRD = new IRD(fileInfo.FullName);
+                                if ((_IRD != null) & (_IRD.version >= 6))
+                                {
+                                    ird_id = _IRD.GAMEID.ToString().Replace("\r", "").Replace("\n", "")
+                                        .Replace("\r\n", "");
+                                    ird_title = _IRD.GAMENAME.ToString().Replace("\r", "").Replace("\n", "")
+                                        .Replace("\r\n", "").Replace("&", "&&");
+                                    Textset(Label_info_ird, string.Format(gameinfo, ird_id, ird_title, _IRD.GameVersion.Replace("\r", "").Replace("\n", "").Replace("\r\n", ""), _IRD.AppVersion.Replace("\r", "").Replace("\n", "").Replace("\r\n", ""), _IRD.UpdateVersion.Replace("\r", "").Replace("\n", "").Replace("\r\n", "")));
+                                    Textset(Summary_Label, "");
+                                    listItemsRemove();
+                                    readIrdThread = new BackgroundWorker();
+                                    readIrdThread.DoWork += new DoWorkEventHandler(this.readirdThread_work);
+                                    readIrdThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.readirdThread_Completed);
+                                    readIrdThread.RunWorkerAsync();
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Your IRD file is incorrect");
+                                    enable_controls();
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception projectError)
+                {
+                    ProjectData.SetProjectError(projectError);
+                    ProjectData.ClearProjectError();
+                }
+            }
+        }
     }
 }

@@ -70,11 +70,13 @@ namespace PS3ISORebuilder
             this.Panel5 = new System.Windows.Forms.Panel();
             this.Label1 = new System.Windows.Forms.Label();
             this.Panel4 = new System.Windows.Forms.Panel();
+            this.Label_JBCheck = new System.Windows.Forms.Label();
             this.ListView1 = new PS3ISORebuilder.ListView_nf();
             this.ColumnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Label_LoadIRD = new System.Windows.Forms.Label();
             this.MenuStrip1.SuspendLayout();
             this.Panel1.SuspendLayout();
             this.Panel2.SuspendLayout();
@@ -108,7 +110,7 @@ namespace PS3ISORebuilder
             // 
             this.OpenFolder_MenuItem.Name = "OpenFolder_MenuItem";
             this.OpenFolder_MenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.End)));
-            this.OpenFolder_MenuItem.Size = new System.Drawing.Size(171, 22);
+            this.OpenFolder_MenuItem.Size = new System.Drawing.Size(175, 22);
             this.OpenFolder_MenuItem.Text = "JB Folder";
             this.OpenFolder_MenuItem.Click += new System.EventHandler(this.OpenFolder_MenuItem_Click);
             // 
@@ -116,20 +118,20 @@ namespace PS3ISORebuilder
             // 
             this.OpenISO_MenuItem.Name = "OpenISO_MenuItem";
             this.OpenISO_MenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.OpenISO_MenuItem.Size = new System.Drawing.Size(171, 22);
+            this.OpenISO_MenuItem.Size = new System.Drawing.Size(175, 22);
             this.OpenISO_MenuItem.Text = "ISO";
             this.OpenISO_MenuItem.Click += new System.EventHandler(this.OpenISO_MenuItem_Click);
             // 
             // ToolStripSeparator1
             // 
             this.ToolStripSeparator1.Name = "ToolStripSeparator1";
-            this.ToolStripSeparator1.Size = new System.Drawing.Size(168, 6);
+            this.ToolStripSeparator1.Size = new System.Drawing.Size(172, 6);
             // 
             // OpenIRD_MenuItem
             // 
             this.OpenIRD_MenuItem.Name = "OpenIRD_MenuItem";
             this.OpenIRD_MenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
-            this.OpenIRD_MenuItem.Size = new System.Drawing.Size(171, 22);
+            this.OpenIRD_MenuItem.Size = new System.Drawing.Size(175, 22);
             this.OpenIRD_MenuItem.Text = "IRD";
             this.OpenIRD_MenuItem.Click += new System.EventHandler(this.OpenIRD_MenuItem_Click);
             // 
@@ -144,7 +146,7 @@ namespace PS3ISORebuilder
             this.ExtractISO_MenuItem,
             this.CompressISO_MenuItem});
             this.BuildItem.Name = "BuildItem";
-            this.BuildItem.Size = new System.Drawing.Size(92, 19);
+            this.BuildItem.Size = new System.Drawing.Size(93, 19);
             this.BuildItem.Text = "Build / Extract";
             // 
             // outtypeComboBox
@@ -302,6 +304,8 @@ namespace PS3ISORebuilder
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Panel2.Controls.Add(this.Label_LoadIRD);
+            this.Panel2.Controls.Add(this.Label_JBCheck);
             this.Panel2.Controls.Add(this.Label_IsoCheck);
             this.Panel2.Controls.Add(this.Label5);
             this.Panel2.Controls.Add(this.Cancel_Button);
@@ -455,6 +459,21 @@ namespace PS3ISORebuilder
             this.Panel4.Size = new System.Drawing.Size(16, 16);
             this.Panel4.TabIndex = 0;
             // 
+            // Label_JBCheck
+            // 
+            this.Label_JBCheck.AllowDrop = true;
+            this.Label_JBCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Label_JBCheck.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Label_JBCheck.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Label_JBCheck.Location = new System.Drawing.Point(636, -1);
+            this.Label_JBCheck.Name = "Label_JBCheck";
+            this.Label_JBCheck.Size = new System.Drawing.Size(49, 39);
+            this.Label_JBCheck.TabIndex = 14;
+            this.Label_JBCheck.Text = "JB DIR Check";
+            this.Label_JBCheck.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Label_JBCheck.DragDrop += new System.Windows.Forms.DragEventHandler(this.Label_JBCheck_DragDrop);
+            this.Label_JBCheck.DragEnter += new System.Windows.Forms.DragEventHandler(this.Label_JBCheck_DragEnter);
+            // 
             // ListView1
             // 
             this.ListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -469,6 +488,7 @@ namespace PS3ISORebuilder
             this.ListView1.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ListView1.FullRowSelect = true;
             this.ListView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.ListView1.HideSelection = false;
             this.ListView1.Location = new System.Drawing.Point(0, 88);
             this.ListView1.Name = "ListView1";
             this.ListView1.Size = new System.Drawing.Size(774, 164);
@@ -500,6 +520,21 @@ namespace PS3ISORebuilder
             this.ColumnHeader4.Tag = "2";
             this.ColumnHeader4.Text = "Length";
             this.ColumnHeader4.Width = 86;
+            // 
+            // Label_LoadIRD
+            // 
+            this.Label_LoadIRD.AllowDrop = true;
+            this.Label_LoadIRD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Label_LoadIRD.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Label_LoadIRD.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Label_LoadIRD.Location = new System.Drawing.Point(588, -1);
+            this.Label_LoadIRD.Name = "Label_LoadIRD";
+            this.Label_LoadIRD.Size = new System.Drawing.Size(49, 39);
+            this.Label_LoadIRD.TabIndex = 15;
+            this.Label_LoadIRD.Text = "Load IRD";
+            this.Label_LoadIRD.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Label_LoadIRD.DragDrop += new System.Windows.Forms.DragEventHandler(this.Label_LoadIRD_DragDrop);
+            this.Label_LoadIRD.DragEnter += new System.Windows.Forms.DragEventHandler(this.Label_LoadIRD_DragEnter);
             // 
             // Form1
             // 
@@ -576,5 +611,7 @@ namespace PS3ISORebuilder
         private ToolStripMenuItem OpenIRD_MenuItem;
         private Label Label_IsoCheck;
         private ToolStripMenuItem CompressISO_MenuItem;
+        private Label Label_JBCheck;
+        private Label Label_LoadIRD;
     }
 }
