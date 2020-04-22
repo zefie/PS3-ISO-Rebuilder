@@ -340,7 +340,7 @@ namespace PS3ISORebuilder
                         if (_SFO.Entries.ContainsKey("TITLE"))
                         {
                             game_title = _SFO.Entries["TITLE"].Data.ToString().Replace("\r", "").Replace("\n", "")
-                                .Replace("\r\n", "");
+                                .Replace("\r\n", "").Replace("&", "&&");
                         }
                         if (_SFO.Entries.ContainsKey("VERSION"))
                         {
@@ -561,7 +561,7 @@ namespace PS3ISORebuilder
                     if (_SFO.Entries.ContainsKey("TITLE"))
                     {
                         game_title = _SFO.Entries["TITLE"].Data.ToString().Replace("\r", "").Replace("\n", "")
-                            .Replace("\r\n", "");
+                            .Replace("\r\n", "").Replace("&", "&&");
                     }
                     if (_SFO.Entries.ContainsKey("VERSION"))
                     {
@@ -691,7 +691,7 @@ namespace PS3ISORebuilder
                     ird_id = _IRD.GAMEID.ToString().Replace("\r", "").Replace("\n", "")
                         .Replace("\r\n", "");
                     ird_title = _IRD.GAMENAME.ToString().Replace("\r", "").Replace("\n", "")
-                        .Replace("\r\n", "");
+                        .Replace("\r\n", "").Replace("&", "&&");
                     Textset(Label_info_ird, string.Format(gameinfo, ird_id, ird_title, _IRD.GameVersion.Replace("\r", "").Replace("\n", "").Replace("\r\n", ""), _IRD.AppVersion.Replace("\r", "").Replace("\n", "").Replace("\r\n", ""), _IRD.UpdateVersion.Replace("\r", "").Replace("\n", "").Replace("\r\n", "")));
                     Textset(Summary_Label, "");
                     listItemsRemove();
@@ -1724,7 +1724,7 @@ namespace PS3ISORebuilder
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         private void Form1_Load(object sender, EventArgs e)
         {
-            Text = "PS3-ISO-Rebuilder - " + MyProject.Application.Info.Version.ToString();
+            Text = "PS3-ISO-Rebuilder - " + MyProject.Application.Info.Version.ToString() + " - zefie edition";
             Settings = Registry.CurrentUser.CreateSubKey("Software\\PS3-ISO-Rebuilder");
             Settings = Registry.CurrentUser.OpenSubKey("Software\\PS3-ISO-Rebuilder", writable: true);
             try
@@ -2001,15 +2001,7 @@ namespace PS3ISORebuilder
             }
             try
             {
-                WebRequest webRequest = WebRequest.Create("http://www.ps3updat.ru.nu/update.php?version=" + version);
-                webRequest.Credentials = CredentialCache.DefaultCredentials;
-                WebResponse response = webRequest.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                StreamReader streamReader = new StreamReader(responseStream);
-                string result = streamReader.ReadToEnd();
-                streamReader.Close();
-                response.Close();
-                return result;
+                return "https://archive.midnightchannel.net/SonyPS/Firmware/?cat=CEX&disc=1&ver=" + version;
             }
             catch (Exception ex)
             {
