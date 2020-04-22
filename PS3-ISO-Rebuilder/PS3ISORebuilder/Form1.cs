@@ -403,15 +403,28 @@ namespace PS3ISORebuilder
             }
             if (!File.Exists(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP"))
             {
-                DialogResult dialogResult = MessageBox.Show("PS3UPDAT.PUP does not exist!\n\nDo you want to open the browser to download the matching PS3UPDAT.PUP?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                DialogResult dialogResult = MessageBox.Show("PS3UPDAT.PUP does not exist!\n\nWould you like to attempt to automatically download it now?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    string text = Conversions.ToString(getupdateURL(fixupdate(Conversions.ToString(_SFO.Entries["PS3_SYSTEM_VER"].Data))));
-                    if (Operators.CompareString(text, "", TextCompare: false) != 0)
+                    Textset(StatusLabel1, "downloading PS3UPDAT.PUP");
+                    string updateURL = Conversions.ToString(getupdateURL(fixupdate(Conversions.ToString(_SFO.Entries["PS3_SYSTEM_VER"].Data))));
+                    WebRequest webRequest = WebRequest.Create(updateURL);
+                    webRequest.Credentials = CredentialCache.DefaultCredentials;
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    Stream responseStream = response.GetResponseStream();
+                    long contentLength = response.ContentLength;
+
+                    byte[] result = new byte[Bufferzize];
+                    int totalread = 0;
+                    FileStream updatefile = File.Open(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP", FileMode.CreateNew);
+                    while (totalread < contentLength)
                     {
-                        Process.Start(text);
-                        DialogResult dialogResult2 = MessageBox.Show("Click OK to proceed if you have downloaded and \nextracted the matching PS3UPDAT.PUP to this JB RiP Folder/PS3_UPDATE", Text, MessageBoxButtons.OK);
+                        int read = responseStream.Read(result, 0, Bufferzize);
+                        updatefile.Write(result, 0, read);
+                        totalread += read;
+                        SetProgressPercent(ProgressBar1, (uint)Math.Round(unchecked((double)totalread / (double)contentLength * 100.0)));
                     }
+                    updatefile.Close();
                 }
             }
             if (File.Exists(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP") && new FileInfo(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP").Length < 268435456)
@@ -2001,7 +2014,7 @@ namespace PS3ISORebuilder
             }
             try
             {
-                return "https://archive.midnightchannel.net/SonyPS/Firmware/?cat=CEX&disc=1&ver=" + version;
+                return "http://archive.midnightchannel.net/SonyPS/Firmware/?cat=CEX&disc=1&ver=" + version;
             }
             catch (Exception ex)
             {

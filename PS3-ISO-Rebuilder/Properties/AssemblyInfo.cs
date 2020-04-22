@@ -15,5 +15,5 @@ using System.Runtime.Versioning;
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default | DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: CompilationRelaxations(8)]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
-[assembly: AssemblyFileVersion("1.0.5.1")]
-[assembly: AssemblyVersion("1.0.5.1")]
+[assembly: AssemblyFileVersion("1.0.5.2")]
+[assembly: AssemblyVersion("1.0.5.2")]
