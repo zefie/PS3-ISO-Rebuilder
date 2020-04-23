@@ -936,7 +936,7 @@ namespace PS3ISORebuilder
             }
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "iso files (*.iso)|*.iso";
-            saveFileDialog.FileName = game_id + "-[" + cleanfilename(game_title) + "].iso";
+            saveFileDialog.FileName = game_id + "-[" + cleanfilename(game_title.Replace("&&", "&")) + "].iso";
             if (saveFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -1145,7 +1145,7 @@ namespace PS3ISORebuilder
             }
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "ird files (*.iso)|*.iso";
-            saveFileDialog.FileName = game_id + "-[" + cleanfilename(game_title) + "].iso";
+            saveFileDialog.FileName = game_id + "-[" + cleanfilename(game_title.Replace("&&", "&")) + "].iso";
             if (saveFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -1413,7 +1413,7 @@ namespace PS3ISORebuilder
                 FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
-                    outpath = Path.Combine(folderBrowserDialog.SelectedPath, game_id + "-[" + cleanfilename(game_title) + "]");
+                    outpath = Path.Combine(folderBrowserDialog.SelectedPath, game_id + "-[" + cleanfilename(game_title.Replace("&&", "&")) + "]");
                     Directory.CreateDirectory(outpath);
                     extractIsoThread = new BackgroundWorker();
                     extractIsoThread.DoWork += new DoWorkEventHandler(this.extractIso);
@@ -1520,7 +1520,7 @@ namespace PS3ISORebuilder
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "iso files (*.cso)|*.cso";
-                saveFileDialog.FileName = game_id + "-[" + cleanfilename(game_title) + "].cso";
+                saveFileDialog.FileName = game_id + "-[" + cleanfilename(game_title.Replace("&&", "&")) + "].cso";
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     outfile = saveFileDialog.FileName;
@@ -1956,6 +1956,8 @@ namespace PS3ISORebuilder
             SetProgressPercent(ProgressBar1, 0u);
             drop_allow(Label5, @bool: false);
             drop_allow(Label_IsoCheck, @bool: false);
+            drop_allow(Label_LoadIRD, @bool: false);
+            drop_allow(Label_JBCheck, @bool: false);
             settoolstripComboBox(outtypeComboBox, @bool: false);
             settoolstripitem(BuildISO_MenuItem, @bool: false);
             settoolstripitem(BuildODE_MenuItem, @bool: false);
@@ -1972,6 +1974,8 @@ namespace PS3ISORebuilder
             SetProgressPercent(ProgressBar1, 0u);
             drop_allow(Label5, @bool: true);
             drop_allow(Label_IsoCheck, @bool: true);
+            drop_allow(Label_LoadIRD, @bool: true);
+            drop_allow(Label_JBCheck, @bool: true);
             setbutton(Cancel_Button, @bool: false);
             settoolstripitem(OpenISO_MenuItem, @bool: true);
             settoolstripitem(OpenFolder_MenuItem, @bool: true);
