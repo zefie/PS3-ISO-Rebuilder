@@ -142,6 +142,11 @@ namespace PS3ISORebuilder
 
         private BackgroundWorker compare;
 
+        private bool firmwareDownloadOccuring = false;
+
+        private bool cancelFirmwareDownload = false;
+           
+
         public Form1()
         {
             base.Load += Form1_Load;
@@ -406,25 +411,40 @@ namespace PS3ISORebuilder
                 DialogResult dialogResult = MessageBox.Show("PS3UPDAT.PUP does not exist!\n\nWould you like to attempt to automatically download it now?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    Textset(StatusLabel1, "downloading PS3UPDAT.PUP");
+                    cancelFirmwareDownload = false;
+                    firmwareDownloadOccuring = true;
+                    Textset(StatusLabel1, "asking the midnight archives for PS3 system firmware v" + fixupdate(Conversions.ToString(_SFO.Entries["PS3_SYSTEM_VER"].Data)) + "...");
                     string updateURL = Conversions.ToString(getupdateURL(fixupdate(Conversions.ToString(_SFO.Entries["PS3_SYSTEM_VER"].Data))));
                     WebRequest webRequest = WebRequest.Create(updateURL);
                     webRequest.Credentials = CredentialCache.DefaultCredentials;
                     HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
                     Stream responseStream = response.GetResponseStream();
                     long contentLength = response.ContentLength;
+                    Textset(StatusLabel1, "downloading PS3UPDAT.PUP v" + fixupdate(Conversions.ToString(_SFO.Entries["PS3_SYSTEM_VER"].Data))+"... please be patient!");
 
                     byte[] result = new byte[Bufferzize];
                     int totalread = 0;
                     FileStream updatefile = File.Open(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP", FileMode.CreateNew);
                     while (totalread < contentLength)
                     {
+                        if (cancelFirmwareDownload)
+                        {
+                            firmwareDownloadOccuring = false;
+                            updatefile.Close();
+                            if (File.Exists(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP"))
+                            {
+                                File.Delete(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP");
+                            }
+                            break;
+                        }
                         int read = responseStream.Read(result, 0, Bufferzize);
                         updatefile.Write(result, 0, read);
                         totalread += read;
                         SetProgressPercent(ProgressBar1, (uint)Math.Round(unchecked((double)totalread / (double)contentLength * 100.0)));
                     }
-                    updatefile.Close();
+                    if (updatefile.CanRead)
+                        updatefile.Close();
+
                 }
             }
             if (File.Exists(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP") && new FileInfo(root_dir + "\\PS3_UPDATE\\PS3UPDAT.PUP").Length < 268435456)
@@ -1833,6 +1853,10 @@ namespace PS3ISORebuilder
             {
                 compressIsoThread.CancelAsync();
             }
+            if (firmwareDownloadOccuring)
+            {
+                cancelFirmwareDownload = true;
+            }
         }
 
         public byte[] GetLIC(string _gameid)
@@ -2262,8 +2286,10 @@ namespace PS3ISORebuilder
                                     readDirThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.readDirThread_Completed);
                                     readDirThread.WorkerSupportsCancellation = true;
                                     readDirThread.RunWorkerAsync();
-                                }
-                            }
+                                } else
+                                    enable_controls();
+                            } else
+                                enable_controls();
                         }
                     }
                 }
